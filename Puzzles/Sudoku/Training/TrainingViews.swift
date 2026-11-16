@@ -42,6 +42,7 @@ struct TrainingListView: View {
                 }
             }
         }
+        .themedBackground()
         .navigationTitle("Training")
     }
 }
@@ -135,6 +136,7 @@ struct TrainingLessonView: View {
             }
             .padding()
         }
+        .themedBackground()
         .navigationTitle(technique.title)
         .navigationBarTitleDisplayMode(.inline)
         .task { if example == nil { await load() } }
@@ -215,7 +217,7 @@ struct TrainingLessonView: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 14))
+        .background(palette.card, in: RoundedRectangle(cornerRadius: 14))
     }
 
     private var legend: some View {

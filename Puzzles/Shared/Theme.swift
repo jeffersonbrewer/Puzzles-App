@@ -12,7 +12,6 @@ enum Theme {
     static let placement = Color(red: 0.15, green: 0.62, blue: 0.35)
     static let gridLine = Color.primary.opacity(0.22)
     static let boxLine = Color.primary.opacity(0.75)
-    static let card = Color(.secondarySystemBackground)
 }
 
 /// The user's theme color, described by a hue (0...1 around the color wheel)
@@ -68,15 +67,103 @@ struct ThemePreset: Identifiable {
     var id: String { name }
 }
 
-/// Colors derived from the theme color, available to every view through
+/// The screen background: a hue plus a strength (0 = plain system background,
+/// 1 = strongest tint). Light mode gets a pale wash; dark mode a deep shade.
+struct BackgroundColor: Equatable {
+    var hue: Double
+    var strength: Double
+
+    static let hueKey = "theme.backgroundHue"
+    static let strengthKey = "theme.backgroundStrength"
+
+    static let plain = BackgroundColor(hue: 0.11, strength: 0)
+
+    static let presets: [BackgroundPreset] = [
+        BackgroundPreset(name: "Plain", background: .plain),
+        BackgroundPreset(name: "Paper", background: BackgroundColor(hue: 0.11, strength: 0.30)),
+        BackgroundPreset(name: "Sand", background: BackgroundColor(hue: 0.08, strength: 0.55)),
+        BackgroundPreset(name: "Sage", background: BackgroundColor(hue: 0.30, strength: 0.45)),
+        BackgroundPreset(name: "Mint", background: BackgroundColor(hue: 0.43, strength: 0.40)),
+        BackgroundPreset(name: "Sky", background: BackgroundColor(hue: 0.56, strength: 0.45)),
+        BackgroundPreset(name: "Lavender", background: BackgroundColor(hue: 0.72, strength: 0.40)),
+        BackgroundPreset(name: "Blush", background: BackgroundColor(hue: 0.97, strength: 0.35)),
+    ]
+
+    var isPlain: Bool { strength < 0.02 }
+
+    static func uiColor(hue: Double, strength: Double, dark: Bool) -> UIColor {
+        if dark {
+            return UIColor(hue: hue, saturation: 0.30 + 0.30 * strength, brightness: 0.07 + 0.13 * strength, alpha: 1)
+        }
+        return UIColor(hue: hue, saturation: 0.05 + 0.30 * strength, brightness: 0.99 - 0.08 * strength, alpha: 1)
+    }
+
+    /// nil means "use the normal system background".
+    var color: Color? {
+        guard !isPlain else { return nil }
+        let h = hue, s = strength
+        return Color(uiColor: UIColor { traits in
+            BackgroundColor.uiColor(hue: h, strength: s, dark: traits.userInterfaceStyle == .dark)
+        })
+    }
+
+    /// A swatch color for pickers (plain shows the system background).
+    var swatch: Color { color ?? Color(.systemBackground) }
+
+    /// The same hue at a given strength, used to draw the strength slider.
+    func atStrength(_ s: Double) -> Color {
+        Color(uiColor: UIColor { traits in
+            BackgroundColor.uiColor(hue: hue, strength: s, dark: traits.userInterfaceStyle == .dark)
+        })
+    }
+}
+
+struct BackgroundPreset: Identifiable {
+    let name: String
+    let background: BackgroundColor
+    var id: String { name }
+}
+
+/// Colors derived from the user's theme, available to every view through
 /// `@Environment(\.palette)`.
 struct Palette {
     var accent: Color
+    /// nil = plain system background.
+    var background: Color? = nil
+
     var selectedCell: Color { accent.opacity(0.38) }
     var sameDigit: Color { accent.opacity(0.22) }
     var peerCell: Color { accent.opacity(0.08) }
 
+    /// Raised surfaces such as the number pad and cards.
+    var card: Color {
+        if background == nil { return Color(.secondarySystemBackground) }
+        return Color(uiColor: UIColor { traits in
+            traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.10) : UIColor(white: 1, alpha: 0.70)
+        })
+    }
+
     static let standard = Palette(accent: ThemeColor.teal.color)
+}
+
+/// Paints the screen with the user's background color, if they picked one.
+struct ThemedBackground: ViewModifier {
+    @Environment(\.palette) private var palette
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let bg = palette.background {
+            content
+                .scrollContentBackground(.hidden)
+                .background(bg.ignoresSafeArea())
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func themedBackground() -> some View { modifier(ThemedBackground()) }
 }
 
 private struct PaletteKey: EnvironmentKey {
@@ -94,6 +181,8 @@ extension EnvironmentValues {
 struct ThemedRoot<Content: View>: View {
     @AppStorage(ThemeColor.hueKey) private var hue = ThemeColor.teal.hue
     @AppStorage(ThemeColor.toneKey) private var tone = ThemeColor.teal.tone
+    @AppStorage(BackgroundColor.hueKey) private var bgHue = BackgroundColor.plain.hue
+    @AppStorage(BackgroundColor.strengthKey) private var bgStrength = BackgroundColor.plain.strength
     private let content: Content
 
     init(@ViewBuilder content: () -> Content) {
@@ -104,7 +193,7 @@ struct ThemedRoot<Content: View>: View {
         let accent = ThemeColor(hue: hue, tone: tone).color
         content
             .tint(accent)
-            .environment(\.palette, Palette(accent: accent))
+            .environment(\.palette, Palette(accent: accent, background: BackgroundColor(hue: bgHue, strength: bgStrength).color))
     }
 }
 

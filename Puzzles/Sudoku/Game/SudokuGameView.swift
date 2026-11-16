@@ -40,6 +40,8 @@ struct SudokuGameView: View {
             Spacer(minLength: 0)
         }
         .padding(.top, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .themedBackground()
         .navigationTitle(game.difficulty.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -128,7 +130,7 @@ struct SudokuGameView: View {
             }
         }
         .padding(14)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 14))
+        .background(palette.card, in: RoundedRectangle(cornerRadius: 14))
         .padding(.horizontal, 12)
     }
 
@@ -219,7 +221,7 @@ struct NumberPadView: View {
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity, minHeight: 62)
-                    .background(Theme.card, in: RoundedRectangle(cornerRadius: 10))
+                    .background(palette.card, in: RoundedRectangle(cornerRadius: 10))
                     .overlay {
                         if game.notesMode {
                             RoundedRectangle(cornerRadius: 10).strokeBorder(palette.accent.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))

@@ -85,6 +85,7 @@ struct SudokuHomeView: View {
                 Toggle("Remove notes when placing a number", isOn: $autoRemoveNotes)
             }
         }
+        .themedBackground()
         .navigationTitle("Sudoku")
         .onAppear { saved = SudokuGame.loadSaved() }
         .navigationDestination(isPresented: $showGame) {

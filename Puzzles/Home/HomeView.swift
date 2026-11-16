@@ -62,6 +62,7 @@ struct HomeView: View {
                 }
                 .padding()
             }
+            .themedBackground()
             .navigationTitle("Puzzles")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -86,8 +87,14 @@ struct HomeView: View {
                                 } label: {
                                     ThemeColorRow()
                                 }
+                                NavigationLink {
+                                    AppIconPickerView()
+                                } label: {
+                                    Text("App Icon")
+                                }
                             }
                         }
+                        .themedBackground()
                         .navigationTitle("Settings")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
@@ -123,6 +130,6 @@ private struct GameCard: View {
             }
         }
         .padding()
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 20))
+        .background(palette.card, in: RoundedRectangle(cornerRadius: 20))
     }
 }

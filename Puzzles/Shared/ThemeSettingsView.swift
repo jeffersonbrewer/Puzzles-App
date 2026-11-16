@@ -1,92 +1,185 @@
 import SwiftUI
 
-/// Pick the app's theme color: preset swatches, or any color with the
-/// color and tone sliders. Includes a live preview of the Sudoku board.
+/// Pick the app's colors: the screen background and the accent used for
+/// your numbers, highlights and buttons. Each has presets plus two
+/// gradient sliders. A live preview of the board sits at the top.
 struct ThemeSettingsView: View {
+    private enum Part: String, CaseIterable, Identifiable {
+        case background = "Background"
+        case accent = "Accent"
+        var id: String { rawValue }
+    }
+
     @AppStorage(ThemeColor.hueKey) private var hue = ThemeColor.teal.hue
     @AppStorage(ThemeColor.toneKey) private var tone = ThemeColor.teal.tone
+    @AppStorage(BackgroundColor.hueKey) private var bgHue = BackgroundColor.plain.hue
+    @AppStorage(BackgroundColor.strengthKey) private var bgStrength = BackgroundColor.plain.strength
+    @State private var part: Part = .background
 
     private var current: ThemeColor { ThemeColor(hue: hue, tone: tone) }
+    private var currentBackground: BackgroundColor { BackgroundColor(hue: bgHue, strength: bgStrength) }
 
     var body: some View {
         Form {
             Section {
-                ThemePreview(accent: current.color)
-                    .listRowInsets(EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14))
-            }
-
-            Section("Presets") {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 14) {
-                    ForEach(ThemeColor.presets) { preset in
-                        Button {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                hue = preset.color.hue
-                                tone = preset.color.tone
-                            }
-                        } label: {
-                            VStack(spacing: 6) {
-                                Circle()
-                                    .fill(preset.color.color)
-                                    .frame(width: 40, height: 40)
-                                    .overlay {
-                                        if preset.color == current {
-                                            Circle().strokeBorder(Color.primary, lineWidth: 2.5)
-                                                .padding(-5)
-                                        }
-                                    }
-                                Text(preset.name)
-                                    .font(.caption)
-                                    .foregroundStyle(.primary)
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 64)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(preset.name)
-                    }
-                }
-                .padding(.vertical, 6)
+                ThemePreview(accent: current.color, background: currentBackground.swatch)
+                    .listRowInsets(EdgeInsets())
             }
 
             Section {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Color")
-                    GradientSlider(
-                        value: $hue,
-                        colors: stride(from: 0.0, through: 1.0, by: 1.0 / 12).map { ThemeColor(hue: $0, tone: tone).color },
-                        thumb: current.color
-                    )
-                    .accessibilityLabel("Color")
+                Picker("Part", selection: $part) {
+                    ForEach(Part.allCases) { Text($0.rawValue).tag($0) }
                 }
-                .padding(.vertical, 4)
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Text("Tone")
-                        Spacer()
-                        Text(tone < 0.35 ? "Light" : tone < 0.7 ? "Medium" : "Deep")
-                            .foregroundStyle(.secondary)
-                    }
-                    GradientSlider(
-                        value: $tone,
-                        colors: [current.atTone(0), current.atTone(0.5), current.atTone(1)],
-                        thumb: current.color
-                    )
-                    .accessibilityLabel("Tone")
-                }
-                .padding(.vertical, 4)
-            } header: {
-                Text("Custom")
-            } footer: {
-                Text("Drag to choose any color, then make it lighter or deeper. The color adjusts itself for dark mode.")
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
 
-            Section {
-                Button("Reset to Teal") {
-                    withAnimation { hue = ThemeColor.teal.hue; tone = ThemeColor.teal.tone }
-                }
+            switch part {
+            case .background: backgroundSections
+            case .accent: accentSections
             }
         }
-        .navigationTitle("Theme Color")
+        .themedBackground()
+        .navigationTitle("Colors")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    // MARK: Background
+
+    private var backgroundItems: [(name: String, color: Color, selected: Bool)] {
+        let now = currentBackground
+        return BackgroundColor.presets.map { preset in
+            let bg = preset.background
+            let selected: Bool = bg.isPlain ? now.isPlain : bg == now
+            return (name: preset.name, color: bg.swatch, selected: selected)
+        }
+    }
+
+    @ViewBuilder
+    private var backgroundSections: some View {
+        Section("Presets") {
+            swatchGrid(backgroundItems) { index in
+                let preset = BackgroundColor.presets[index]
+                bgHue = preset.background.hue
+                bgStrength = preset.background.strength
+            }
+        }
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Color")
+                GradientSlider(
+                    value: $bgHue,
+                    colors: stride(from: 0.0, through: 1.0, by: 1.0 / 12).map { BackgroundColor(hue: $0, strength: max(bgStrength, 0.6)).swatch },
+                    thumb: currentBackground.swatch
+                )
+                .accessibilityLabel("Background color")
+            }
+            .padding(.vertical, 4)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Strength")
+                    Spacer()
+                    Text(currentBackground.isPlain ? "Plain" : bgStrength < 0.4 ? "Subtle" : bgStrength < 0.75 ? "Medium" : "Strong")
+                        .foregroundStyle(.secondary)
+                }
+                GradientSlider(
+                    value: $bgStrength,
+                    colors: [currentBackground.atStrength(0), currentBackground.atStrength(0.5), currentBackground.atStrength(1)],
+                    thumb: currentBackground.swatch
+                )
+                .accessibilityLabel("Background strength")
+            }
+            .padding(.vertical, 4)
+        } header: {
+            Text("Custom")
+        } footer: {
+            Text("Pick a color, then choose how strong the tint is. All the way left is the plain background. In dark mode it becomes a deep shade of the same color.")
+        }
+    }
+
+    // MARK: Accent
+
+    @ViewBuilder
+    private var accentSections: some View {
+        Section("Presets") {
+            swatchGrid(ThemeColor.presets.map { (name: $0.name, color: $0.color.color, selected: $0.color == current) }) { index in
+                let preset = ThemeColor.presets[index]
+                hue = preset.color.hue
+                tone = preset.color.tone
+            }
+        }
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Color")
+                GradientSlider(
+                    value: $hue,
+                    colors: stride(from: 0.0, through: 1.0, by: 1.0 / 12).map { ThemeColor(hue: $0, tone: tone).color },
+                    thumb: current.color
+                )
+                .accessibilityLabel("Accent color")
+            }
+            .padding(.vertical, 4)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Tone")
+                    Spacer()
+                    Text(tone < 0.35 ? "Light" : tone < 0.7 ? "Medium" : "Deep")
+                        .foregroundStyle(.secondary)
+                }
+                GradientSlider(
+                    value: $tone,
+                    colors: [current.atTone(0), current.atTone(0.5), current.atTone(1)],
+                    thumb: current.color
+                )
+                .accessibilityLabel("Accent tone")
+            }
+            .padding(.vertical, 4)
+        } header: {
+            Text("Custom")
+        } footer: {
+            Text("The accent colors your numbers, highlights and buttons. It brightens itself in dark mode so it stays readable.")
+        }
+        Section {
+            Button("Reset colors") {
+                hue = ThemeColor.teal.hue
+                tone = ThemeColor.teal.tone
+                bgHue = BackgroundColor.plain.hue
+                bgStrength = BackgroundColor.plain.strength
+            }
+        }
+    }
+
+    private func swatchGrid(_ items: [(name: String, color: Color, selected: Bool)], onPick: @escaping (Int) -> Void) -> some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 14) {
+            ForEach(items.indices, id: \.self) { index in
+                let item = items[index]
+                Button {
+                    withAnimation(.easeOut(duration: 0.2)) { onPick(index) }
+                } label: {
+                    VStack(spacing: 6) {
+                        Circle()
+                            .fill(item.color)
+                            .overlay(Circle().strokeBorder(Color.primary.opacity(0.15), lineWidth: 1))
+                            .frame(width: 40, height: 40)
+                            .overlay {
+                                if item.selected {
+                                    Circle().strokeBorder(Color.primary, lineWidth: 2.5)
+                                        .padding(-5)
+                                }
+                            }
+                        Text(item.name)
+                            .font(.caption)
+                            .foregroundStyle(.primary)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 64)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(item.name)
+                .accessibilityAddTraits(item.selected ? .isSelected : [])
+            }
+        }
+        .padding(.vertical, 6)
     }
 }
 
@@ -137,6 +230,7 @@ struct GradientSlider: View {
 /// A small slice of the game screen showing how the color looks.
 private struct ThemePreview: View {
     let accent: Color
+    let background: Color
 
     var body: some View {
         let palette = Palette(accent: accent)
@@ -180,20 +274,28 @@ private struct ThemePreview: View {
                 Text("Auto On").font(.caption2).foregroundStyle(accent)
             }
         }
+        .padding(14)
+        .background(background)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Preview of the board in this color")
+        .accessibilityLabel("Preview of the board in these colors")
     }
 }
 
-/// A settings row: "Theme Color" with a swatch of the current color.
+/// A settings row: "Colors" with swatches of the background and accent.
 struct ThemeColorRow: View {
     @Environment(\.palette) private var palette
 
     var body: some View {
         HStack {
-            Text("Theme Color")
+            Text("Colors")
             Spacer()
-            Circle().fill(palette.accent).frame(width: 22, height: 22)
+            ZStack {
+                Circle().fill(palette.background ?? Color(.systemBackground))
+                    .overlay(Circle().strokeBorder(Color.primary.opacity(0.2), lineWidth: 1))
+                    .frame(width: 22, height: 22)
+                    .offset(x: -12)
+                Circle().fill(palette.accent).frame(width: 22, height: 22)
+            }
         }
     }
 }
