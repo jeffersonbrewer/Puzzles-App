@@ -41,6 +41,8 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
 }
 
 struct HomeView: View {
+    @State private var showSettings = false
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -61,6 +63,33 @@ struct HomeView: View {
                 .padding()
             }
             .navigationTitle("Puzzles")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel("Settings")
+                }
+            }
+            .sheet(isPresented: $showSettings) {
+                NavigationStack {
+                    Form {
+                        Section("Appearance") {
+                            AppearancePicker()
+                        }
+                    }
+                    .navigationTitle("Settings")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { showSettings = false }
+                        }
+                    }
+                }
+                .presentationDetents([.medium])
+            }
         }
     }
 }

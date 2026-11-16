@@ -69,6 +69,11 @@ struct SudokuHomeView: View {
             }
 
             Section("Settings") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Appearance")
+                    AppearancePicker()
+                }
+                .padding(.vertical, 4)
                 Toggle("Show mistakes as you play", isOn: $showMistakes)
                 Toggle("Highlight row, column and box", isOn: $highlightPeers)
                 Toggle("Remove notes when placing a number", isOn: $autoRemoveNotes)
