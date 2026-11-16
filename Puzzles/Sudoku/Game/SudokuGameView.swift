@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SudokuGameView: View {
+    @Environment(\.palette) private var palette
     @ObservedObject var game: SudokuGame
     var onNewGame: (Difficulty) -> Void
 
@@ -82,7 +83,7 @@ struct SudokuGameView: View {
 
     private var pausedCard: some View {
         VStack(spacing: 12) {
-            Image(systemName: "pause.circle.fill").font(.system(size: 54)).foregroundStyle(Theme.accent)
+            Image(systemName: "pause.circle.fill").font(.system(size: 54)).foregroundStyle(palette.accent)
             Text("Paused").font(.title2.weight(.semibold))
             Button("Resume") { game.resume() }
                 .buttonStyle(.borderedProminent)
@@ -173,6 +174,7 @@ struct SudokuGameView: View {
 }
 
 struct ControlButton: View {
+    @Environment(\.palette) private var palette
     let title: String
     let systemImage: String
     let isOn: Bool
@@ -184,11 +186,11 @@ struct ControlButton: View {
                 Image(systemName: systemImage)
                     .font(.title3)
                     .frame(width: 44, height: 34)
-                    .background(isOn ? Theme.accent : Color.clear, in: RoundedRectangle(cornerRadius: 9))
+                    .background(isOn ? palette.accent : Color.clear, in: RoundedRectangle(cornerRadius: 9))
                     .foregroundStyle(isOn ? Color.white : Color.primary)
                 Text(title)
                     .font(.caption2)
-                    .foregroundStyle(isOn ? Theme.accent : .secondary)
+                    .foregroundStyle(isOn ? palette.accent : .secondary)
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
@@ -198,6 +200,7 @@ struct ControlButton: View {
 }
 
 struct NumberPadView: View {
+    @Environment(\.palette) private var palette
     @ObservedObject var game: SudokuGame
 
     var body: some View {
@@ -210,7 +213,7 @@ struct NumberPadView: View {
                     VStack(spacing: 2) {
                         Text("\(d)")
                             .font(.system(size: game.notesMode ? 24 : 30, weight: game.notesMode ? .regular : .medium, design: .rounded))
-                            .foregroundStyle(game.notesMode ? Theme.accent : .primary)
+                            .foregroundStyle(game.notesMode ? palette.accent : .primary)
                         Text(left > 0 ? "\(left)" : " ")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
@@ -219,7 +222,7 @@ struct NumberPadView: View {
                     .background(Theme.card, in: RoundedRectangle(cornerRadius: 10))
                     .overlay {
                         if game.notesMode {
-                            RoundedRectangle(cornerRadius: 10).strokeBorder(Theme.accent.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                            RoundedRectangle(cornerRadius: 10).strokeBorder(palette.accent.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
                         }
                     }
                 }

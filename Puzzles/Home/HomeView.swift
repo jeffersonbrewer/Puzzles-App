@@ -74,27 +74,36 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showSettings) {
-                NavigationStack {
-                    Form {
-                        Section("Appearance") {
-                            AppearancePicker()
+                ThemedRoot {
+                    NavigationStack {
+                        Form {
+                            Section("Appearance") {
+                                AppearancePicker()
+                            }
+                            Section {
+                                NavigationLink {
+                                    ThemeSettingsView()
+                                } label: {
+                                    ThemeColorRow()
+                                }
+                            }
                         }
-                    }
-                    .navigationTitle("Settings")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Done") { showSettings = false }
+                        .navigationTitle("Settings")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { showSettings = false }
+                            }
                         }
                     }
                 }
-                .presentationDetents([.medium])
             }
         }
     }
 }
 
 private struct GameCard: View {
+    @Environment(\.palette) private var palette
     let game: PuzzleGame
 
     var body: some View {
@@ -103,7 +112,7 @@ private struct GameCard: View {
                 .font(.system(size: 30, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 64, height: 64)
-                .background(Theme.accent.gradient, in: RoundedRectangle(cornerRadius: 16))
+                .background(palette.accent.gradient, in: RoundedRectangle(cornerRadius: 16))
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.title).font(.title3.weight(.semibold))
                 Text(game.subtitle).font(.subheadline).foregroundStyle(.secondary)

@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Sudoku's landing screen: continue, start a new game, training and settings.
 struct SudokuHomeView: View {
+    @Environment(\.palette) private var palette
     @State private var saved: SudokuSave?
     @State private var game: SudokuGame?
     @State private var showGame = false
@@ -22,7 +23,7 @@ struct SudokuHomeView: View {
                         HStack {
                             Image(systemName: "play.circle.fill")
                                 .font(.title)
-                                .foregroundStyle(Theme.accent)
+                                .foregroundStyle(palette.accent)
                             VStack(alignment: .leading) {
                                 Text("Continue").font(.headline)
                                 Text("\(saved.puzzle.difficulty.title) · \(formatTime(saved.elapsed))")
@@ -74,6 +75,11 @@ struct SudokuHomeView: View {
                     AppearancePicker()
                 }
                 .padding(.vertical, 4)
+                NavigationLink {
+                    ThemeSettingsView()
+                } label: {
+                    ThemeColorRow()
+                }
                 Toggle("Show mistakes as you play", isOn: $showMistakes)
                 Toggle("Highlight row, column and box", isOn: $highlightPeers)
                 Toggle("Remove notes when placing a number", isOn: $autoRemoveNotes)

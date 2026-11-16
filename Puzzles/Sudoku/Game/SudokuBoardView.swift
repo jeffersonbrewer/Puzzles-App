@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Draws a Sudoku grid. Used by both the game and the training lessons.
 struct SudokuBoardView: View {
+    @Environment(\.palette) private var palette
     let values: [Int]
     let givens: [Int]
     let notes: [UInt16]
@@ -56,15 +57,15 @@ struct SudokuBoardView: View {
     }
 
     private func cellBackground(_ i: Int) -> Color {
-        if i == selected { return Theme.selectedCell }
+        if i == selected { return palette.selectedCell }
         if let step {
             if step.patternCells.contains(i) { return Theme.patternCell }
             if step.houses.contains(where: { Sudoku.houses[$0].contains(i) }) { return Theme.houseShade }
             return .clear
         }
         if wrongCells.contains(i) { return Theme.wrongCell }
-        if let d = selectedDigit, values[i] == d { return Theme.sameDigit }
-        if highlightPeers, let s = selected, Sudoku.sees(s, i) { return Theme.peerCell }
+        if let d = selectedDigit, values[i] == d { return palette.sameDigit }
+        if highlightPeers, let s = selected, Sudoku.sees(s, i) { return palette.peerCell }
         return .clear
     }
 
@@ -86,7 +87,7 @@ struct SudokuBoardView: View {
 
     private func valueColor(_ i: Int) -> Color {
         if wrongCells.contains(i) { return Theme.wrongText }
-        return givens[i] != 0 ? .primary : Theme.accent
+        return givens[i] != 0 ? .primary : palette.accent
     }
 
     private func notesGrid(_ i: Int, size: CGFloat) -> some View {
@@ -123,7 +124,7 @@ struct SudokuBoardView: View {
             } else if step == nil, selectedDigit == digit {
                 Text("\(digit)").font(font.weight(.bold)).foregroundStyle(.white)
                     .frame(width: size * 0.95, height: size * 0.95)
-                    .background(Circle().fill(Theme.accent))
+                    .background(Circle().fill(palette.accent))
             } else {
                 Text("\(digit)").font(font).foregroundStyle(.secondary)
             }

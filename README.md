@@ -14,6 +14,7 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. Sudoku is the fir
 - **Hints** that name the technique, highlight the pattern on the board and explain it.
 - **Training mode** with lessons for Hidden/Naked Singles, Pointing Pairs, Box/Line Reduction, Naked/Hidden Pairs, Naked Triples, X-Wing, Y-Wing, XYZ-Wing and Swordfish. Each lesson explains the idea, then walks through a real board: find it, see the pattern, see the result, apply it. "Another example" loads a new position.
 - **Dark mode.** Choose System, Light or Dark from the gear on the home screen or in Sudoku settings.
+- **Theme color.** Pick a preset (Teal, Forest, Sky, Ocean, Indigo, Plum, Coral, Amber) or any color with the Color and Tone sliders. It applies across the whole app and adjusts itself for dark mode.
 - Your current game is saved automatically.
 
 ## Run it on your iPhone

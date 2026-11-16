@@ -93,6 +93,7 @@ enum TrainingExamples {
 }
 
 struct TrainingLessonView: View {
+    @Environment(\.palette) private var palette
     let technique: Technique
 
     private enum Stage: Int { case find, pattern, result, applied }
@@ -117,7 +118,7 @@ struct TrainingLessonView: View {
                         HStack(alignment: .top, spacing: 8) {
                             Text("\(n + 1).")
                                 .font(.callout.weight(.semibold))
-                                .foregroundStyle(Theme.accent)
+                                .foregroundStyle(palette.accent)
                             Text(line).font(.callout)
                         }
                     }

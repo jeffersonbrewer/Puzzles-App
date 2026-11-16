@@ -6,8 +6,10 @@ struct PuzzlesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .preferredColorScheme(appearance.colorScheme)
+            ThemedRoot {
+                HomeView()
+            }
+            .preferredColorScheme(appearance.colorScheme)
         }
     }
 }
