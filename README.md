@@ -1,6 +1,6 @@
 # Puzzles
 
-A personal, ad-free puzzle app for iPhone, built with SwiftUI. Sudoku is the first game; the app is set up so more games (Solitaire is next) can be added alongside it.
+A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and Solitaire, and is set up so more games can be added alongside them.
 
 ## Sudoku features
 
@@ -13,10 +13,22 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. Sudoku is the fir
 - **Real-time mistakes.** A wrong number turns red right away, and mistakes are counted (can be turned off).
 - **Hints** that name the technique, highlight the pattern on the board and explain it.
 - **Training mode** with lessons for Hidden/Naked Singles, Pointing Pairs, Box/Line Reduction, Naked/Hidden Pairs, Naked Triples, X-Wing, Y-Wing, XYZ-Wing and Swordfish. Each lesson explains the idea, then walks through a real board: find it, see the pattern, see the result, apply it. "Another example" loads a new position.
-- **Dark mode.** Choose System, Light or Dark from the gear on the home screen or in Sudoku settings.
-- **Colors.** Tint the background (Paper, Sand, Sage, Mint, Sky, Lavender, Blush, or any color with the Color and Strength sliders) and choose the accent used for your numbers and highlights. Both adjust themselves for dark mode.
-- **App icon.** Six icons to choose from (Teal, Forest, Midnight, Paper, Sunset, Mono), from the gear on the home screen. Redraw them with `python3 tools/make_icons.py`.
 - Your current game is saved automatically.
+
+## Solitaire features
+
+- **Klondike, draw 1 or draw 3**, with unlimited trips through the stock.
+- **Tap or drag.** Tap a card to send it to its best spot, or drag a card or a run anywhere it fits.
+- **Undo**, **Hint** and **Restart deal**.
+- **Finish** plays out the rest once every card is face up.
+- **Timer** with pause, and a move counter.
+- Your current game is saved automatically. Deals are random, so some can't be won.
+
+## Look and feel
+
+- **Dark mode.** Choose System, Light or Dark from the gear on the home screen or in a game's settings.
+- **Colors.** Tint the background (Paper, Sand, Sage, Mint, Sky, Lavender, Blush, or any color with the Color and Strength sliders) and choose the accent used for your numbers, highlights and card backs. Both adjust themselves for dark mode.
+- **App icon.** Six icons to choose from (Teal, Forest, Midnight, Paper, Sunset, Mono), from the gear on the home screen. Redraw them with `python3 tools/make_icons.py`.
 
 ## Run it on your iPhone
 
@@ -51,14 +63,18 @@ Puzzles/
     Engine/               Grid geometry, brute-force solver, generator, human-style logic solver
     Game/                 Game state (undo, notes, timer, hints) and the board/game screens
     Training/             Lesson text and lesson screens
+  Solitaire/
+    SolitaireHomeView.swift  Continue, new game, settings
+    Engine/               Cards and Klondike rules, hints, finishing (no UI)
+    Game/                 Game state (undo, timer, saving), card drawing and the board/game screens
   Assets.xcassets         App icon and accent color
 tools/                    Python reference of the engine, used to build the training example bank
 ```
 
 ### Adding another game
 
-1. Create a folder such as `Puzzles/Solitaire/` with its own views and logic.
-2. In `Home/HomeView.swift`, add or enable its case in `PuzzleGame` and return its main view from `destination`.
+1. Create a folder such as `Puzzles/Minesweeper/` with its own views and logic.
+2. In `Home/HomeView.swift`, add its case to `PuzzleGame` and return its main view from `destination`.
 
 ### Regenerating training examples
 

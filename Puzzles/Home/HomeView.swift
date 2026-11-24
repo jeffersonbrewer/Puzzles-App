@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Every game in the app. To add a new game, add a case here and give it a
-/// destination view in its own folder (for example Puzzles/Solitaire/).
+/// destination view in its own folder (like Puzzles/Solitaire/).
 enum PuzzleGame: String, CaseIterable, Identifiable {
     case sudoku
     case solitaire
@@ -18,7 +18,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
     var subtitle: String {
         switch self {
         case .sudoku: return "Classic 9x9 with notes, hints and training"
-        case .solitaire: return "Coming soon"
+        case .solitaire: return "Klondike, draw one or draw three"
         }
     }
 
@@ -29,13 +29,11 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
         }
     }
 
-    var isAvailable: Bool { self == .sudoku }
-
     @MainActor @ViewBuilder
     var destination: some View {
         switch self {
         case .sudoku: SudokuHomeView()
-        case .solitaire: Text("Solitaire is coming soon.")
+        case .solitaire: SolitaireHomeView()
         }
     }
 }
@@ -48,12 +46,8 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 14) {
                     ForEach(PuzzleGame.allCases) { game in
-                        if game.isAvailable {
-                            NavigationLink { game.destination } label: { GameCard(game: game) }
-                                .buttonStyle(.plain)
-                        } else {
-                            GameCard(game: game).opacity(0.5)
-                        }
+                        NavigationLink { game.destination } label: { GameCard(game: game) }
+                            .buttonStyle(.plain)
                     }
                     Text("No ads. No tracking. Just puzzles.")
                         .font(.footnote)
@@ -125,9 +119,7 @@ private struct GameCard: View {
                 Text(game.subtitle).font(.subheadline).foregroundStyle(.secondary)
             }
             Spacer()
-            if game.isAvailable {
-                Image(systemName: "chevron.right").foregroundStyle(.tertiary)
-            }
+            Image(systemName: "chevron.right").foregroundStyle(.tertiary)
         }
         .padding()
         .background(palette.card, in: RoundedRectangle(cornerRadius: 20))
