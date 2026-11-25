@@ -1,6 +1,6 @@
 # Puzzles
 
-A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and Solitaire, and is set up so more games can be added alongside them.
+A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku, Solitaire and Mahjong, and is set up so more games can be added alongside them.
 
 ## Sudoku features
 
@@ -23,6 +23,16 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and
 - **Finish** plays out the rest once every card is face up.
 - **Timer** with pause, and a move counter.
 - Your current game is saved automatically. Deals are random, so some can't be won.
+
+## Mahjong features
+
+- **Tile-matching solitaire** with the full 144-tile set: three suits, winds, dragons, flowers and seasons. Remove free tiles in matching pairs; any two flowers match, and so do any two seasons.
+- **Three original layouts** shaped for a phone held upright: Garden (72 tiles), Fortress (86) and Pagoda (all 144).
+- **Every deal can be cleared.** Deals are built by playing a random game backwards.
+- **Hint** shows a free pair (tap again for the next one), **Shuffle** moves the remaining tiles when you're stuck, plus **Undo** and **Restart deal**.
+- Blocked tiles are shaded (can be turned off), and the screen tells you how many matches are open.
+- Tile art is drawn in code, follows Light/Dark mode, and the tile backs use your theme color.
+- **Timer** with pause. Your current game is saved automatically.
 
 ## Look and feel
 
