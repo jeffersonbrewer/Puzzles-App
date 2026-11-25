@@ -1,6 +1,6 @@
 # Puzzles
 
-A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and Solitaire, and is set up so more games can be added alongside them.
+A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku, Solitaire and Nonograms, and is set up so more games can be added alongside them.
 
 ## Sudoku features
 
@@ -23,6 +23,17 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and
 - **Finish** plays out the rest once every card is face up.
 - **Timer** with pause, and a move counter.
 - Your current game is saved automatically. Deals are random, so some can't be won.
+
+## Nonograms features
+
+- **25 original pictures** in three sizes: 5×5, 10×10 and 15×15. Each one can be solved one line at a time, so there's exactly one answer and no guessing. A solved picture shows on its tile with your best time.
+- **Random puzzles** in each size, also guaranteed to need no guessing.
+- **Fill and Cross tools.** Tap a square, or drag along a row or column to mark several at once. Dragging back un-marks them.
+- **Clues turn grey** when their line matches, and the row and column under your finger are highlighted.
+- **Hints** point to a line you can make progress on and show which squares to fill or cross out, with an Apply button. If something is marked wrong, the hint shows that first.
+- **Show mistakes as you play** (off by default) marks wrong squares in red and counts them.
+- **Lessons**: How to Play, Lines That Add Up, Overlap, Starting From an Edge, How Far a Run Reaches, Finished Lines and Gaps Too Small. Each walks through example rows, plus a practice puzzle.
+- **Undo**, **Start over**, a **timer** with pause, and your current puzzle is saved automatically.
 
 ## Look and feel
 
@@ -67,8 +78,13 @@ Puzzles/
     SolitaireHomeView.swift  Continue, new game, settings
     Engine/               Cards and Klondike rules, hints, finishing (no UI)
     Game/                 Game state (undo, timer, saving), card drawing and the board/game screens
+  Nonograms/
+    NonogramsHomeView.swift  Continue, picture sets, random puzzles, lessons, settings
+    Engine/               Puzzle model, line solver, picture sets (NonogramLibrary.swift is generated)
+    Game/                 Game state (marking, undo, hints, timer, saving) and the board/game screens
+    Training/             Lesson text and lesson screens
   Assets.xcassets         App icon and accent color
-tools/                    Python reference of the engine, used to build the training example bank
+tools/                    Python references of the engines, used to build the Sudoku training bank and the Nonograms pictures
 ```
 
 ### Adding another game
@@ -79,3 +95,7 @@ tools/                    Python reference of the engine, used to build the trai
 ### Regenerating training examples
 
 `Puzzles/Sudoku/Engine/TrainingBank.swift` holds puzzles known to reach each technique. To make new ones, run `python3 tools/make_training_bank.py` from the `tools` folder and copy the output into that file.
+
+### Adding Nonograms pictures
+
+Draw the picture in `tools/nonogram_art.py` (`#` filled, `.` empty), then run `python3 make_nonograms.py` from the `tools` folder. It checks that each picture can be solved without guessing and rewrites `Puzzles/Nonograms/Engine/NonogramLibrary.swift`.
