@@ -24,6 +24,14 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and
 - **Timer** with pause, and a move counter.
 - Your current game is saved automatically. Deals are random, so some can't be won.
 
+## Checkers features
+
+- **Play the computer** on Easy, Medium or Hard, and choose whether you move first. American rules: jumps are required, multiple jumps continue in the same turn, and men reaching the far row are crowned kings.
+- **Tap to move.** Tap a piece to see where it can go, then tap the square. For a multiple jump, tap each landing in turn. Pieces that can move get a soft outline (can be turned off).
+- **Undo** takes back your move and the computer's reply. **Hint** outlines a good move.
+- **Lessons** on moving, capturing, multiple jumps, kings, winning, safe moves and the two-for-one shot. Each one ends with a position to solve on the board.
+- **Timer** with pause, and your current game is saved automatically.
+
 ## Look and feel
 
 - **Dark mode.** Choose System, Light or Dark from the gear on the home screen or in a game's settings.
@@ -67,8 +75,13 @@ Puzzles/
     SolitaireHomeView.swift  Continue, new game, settings
     Engine/               Cards and Klondike rules, hints, finishing (no UI)
     Game/                 Game state (undo, timer, saving), card drawing and the board/game screens
+  Checkers/
+    CheckersHomeView.swift   Continue, new game, lessons, settings
+    Engine/               Board and rules, and the computer opponent (alpha-beta search)
+    Game/                 Game state (undo, hints, saving) and the board/game screens
+    Lessons/              Lesson text and positions, and the lesson screens
   Assets.xcassets         App icon and accent color
-tools/                    Python reference of the engine, used to build the training example bank
+tools/                    Python reference of the engine, used to build the training example bank; checkers_reference.py checks the checkers lesson positions
 ```
 
 ### Adding another game
