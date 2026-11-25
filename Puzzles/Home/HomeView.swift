@@ -5,6 +5,7 @@ import SwiftUI
 enum PuzzleGame: String, CaseIterable, Identifiable {
     case sudoku
     case solitaire
+    case nonograms
 
     var id: String { rawValue }
 
@@ -12,6 +13,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
         switch self {
         case .sudoku: return "Sudoku"
         case .solitaire: return "Solitaire"
+        case .nonograms: return "Nonograms"
         }
     }
 
@@ -19,6 +21,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
         switch self {
         case .sudoku: return "Classic 9x9 with notes, hints and training"
         case .solitaire: return "Klondike, draw one or draw three"
+        case .nonograms: return "Picture logic puzzles with lessons"
         }
     }
 
@@ -26,6 +29,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
         switch self {
         case .sudoku: return "square.grid.3x3.fill"
         case .solitaire: return "suit.spade.fill"
+        case .nonograms: return "square.grid.4x3.fill"
         }
     }
 
@@ -34,6 +38,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
         switch self {
         case .sudoku: SudokuHomeView()
         case .solitaire: SolitaireHomeView()
+        case .nonograms: NonogramsHomeView()
         }
     }
 }
