@@ -1,6 +1,6 @@
 # Puzzles
 
-A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and Solitaire, and is set up so more games can be added alongside them.
+A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and Solitaire (Klondike, FreeCell and Spider), and is set up so more games can be added alongside them.
 
 ## Sudoku features
 
@@ -18,9 +18,12 @@ A personal, ad-free puzzle app for iPhone, built with SwiftUI. It has Sudoku and
 ## Solitaire features
 
 - **Klondike, draw 1 or draw 3**, with unlimited trips through the stock.
+- **FreeCell**: every card face up, four free cells, and runs move together when there is room.
+- **Spider** with 1, 2 or 4 suits. Finished king-to-ace runs clear themselves.
+- **How to play** lessons for FreeCell and Spider. Each one explains an idea, then gives you a small board to try it on, with Show me if you get stuck.
 - **Tap or drag.** Tap a card to send it to its best spot, or drag a card or a run anywhere it fits.
 - **Undo**, **Hint** and **Restart deal**.
-- **Finish** plays out the rest once every card is face up.
+- **Finish** plays out the rest once every card is face up (Klondike) or every column is in order (FreeCell).
 - **Timer** with pause, and a move counter.
 - Your current game is saved automatically. Deals are random, so some can't be won.
 
@@ -64,9 +67,10 @@ Puzzles/
     Game/                 Game state (undo, notes, timer, hints) and the board/game screens
     Training/             Lesson text and lesson screens
   Solitaire/
-    SolitaireHomeView.swift  Continue, new game, settings
-    Engine/               Cards and Klondike rules, hints, finishing (no UI)
+    SolitaireHomeView.swift  Continue, new games, lessons, settings
+    Engine/               Cards and the Klondike, FreeCell and Spider rules, hints, finishing (no UI)
     Game/                 Game state (undo, timer, saving), card drawing and the board/game screens
+    Lessons/              FreeCell and Spider lesson text, practice boards and screens
   Assets.xcassets         App icon and accent color
 tools/                    Python reference of the engine, used to build the training example bank
 ```

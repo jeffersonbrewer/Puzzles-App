@@ -18,7 +18,7 @@ enum PuzzleGame: String, CaseIterable, Identifiable {
     var subtitle: String {
         switch self {
         case .sudoku: return "Classic 9x9 with notes, hints and training"
-        case .solitaire: return "Klondike, draw one or draw three"
+        case .solitaire: return "Klondike, FreeCell and Spider, with lessons"
         }
     }
 
